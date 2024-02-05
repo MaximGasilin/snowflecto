@@ -1,46 +1,40 @@
 CREATE DATABASE snowflecto;
 GRANT CONNECT ON DATABASE snowflecto TO python;
 GRANT TEMPORARY ON DATABASE snowflecto TO python;
+GRANT CONNECT ON DATABASE snowflecto TO pgadminforouterconnection;
+GRANT TEMPORARY ON DATABASE snowflecto TO pgadminforouterconnection;
 
 \c snowflecto
-CREATE TABLE collections(link UUID not null default gen_random_uuid(), name varchar(250) not null, description text, snowflakeslimit integer not null);
-GRANT SELECT ON collections TO python;
-GRANT INSERT ON collections TO python;
-GRANT UPDATE ON collections TO python;
-GRANT DELETE ON collections TO python;
+CREATE TABLE settings(name varchar(250) NOT NULL, value text, description text);
+INSERT INTO settings(name, value, description) VALUES ('limit_of_registries', '256', 'Количество реестров, которые можно будет создавать для генерации внутреннего кода. Минимальное значение - 3. Т.к. нулевой и последний реестры вспомогательные и нужны для предотвращения ситуаций с нехваткой номеров. В обычном режиме будут использватьсяя реестры со 1-го по 254. Нулевой хранит индекс самой первой капли. А 255-й - последней.'), 
+('limit_of_indexes_in_registry', '2147483648', 'Количество возможных индексов в каждом реестре.')
 
-CREATE TABLE watervessels(collection UUID not null, begindropindex bigint not null, enddropindex bigint not null);
-GRANT SELECT ON watervessels TO python;
-GRANT INSERT ON watervessels TO python;
-GRANT UPDATE ON watervessels TO python;
-GRANT DELETE ON watervessels TO python;
+CREATE TABLE collections(id integer NOT NULL PRIMARY KEY, name varchar(250) NOT NULL, description text, composition_count integer NOT NULL);
 
-CREATE TABLE freezingdrops(collection UUID not null, dropindex bigint not null, begin timestamp not null);
-GRANT SELECT ON freezingdrops TO python;
-GRANT INSERT ON freezingdrops TO python;
-GRANT UPDATE ON freezingdrops TO python;
-GRANT DELETE ON freezingdrops TO python;
+CREATE TABLE water_vessels(collection integer NOT NULL, begin_drop_index numeric(1000) NOT NULL, end_drop_index numeric(1000) NOT NULL);
 
-CREATE TABLE freezers(link UUID not null default gen_random_uuid(), name varchar(250) not null, description text);
-GRANT SELECT ON freezers TO python;
-GRANT INSERT ON freezers TO python;
-GRANT UPDATE ON freezers TO python;
-GRANT DELETE ON freezers TO python;
+CREATE TABLE drops_internal_registries(collection integer NOT NULL, registry smallint NOT NULL, order smallint NOT NULL);
 
-CREATE TABLE composition(collection UUID not null, dropindex bigint not null, quality numeric(15, 10) not null, freezer UUID, parameters jsonpath);
-GRANT SELECT ON composition TO python;
-GRANT INSERT ON composition TO python;
-GRANT UPDATE ON composition TO python;
-GRANT DELETE ON composition TO python;
+CREATE TABLE drops_internal_indexes(collection integer NOT NULL, dropindex numeric(1000) NOT NULL, in_registry smallint NOT NULL, in_index integer NOT NULL);
 
-CREATE TABLE interestingdrops(collection UUID not null, dropindex bigint not null, quality numeric(15, 10) not null);
-GRANT SELECT ON interestingdrops TO python;
-GRANT INSERT ON interestingdrops TO python;
-GRANT UPDATE ON interestingdrops TO python;
-GRANT DELETE ON interestingdrops TO python;
+CREATE TABLE freezing_drops(collection integer NOT NULL, in_registry smallint NOT NULL, in_index integer NOT NULL, begin timestamp not null);
 
-CREATE TABLE formedsnowflakes(collection UUID not null, dropindex bigint not null);
-GRANT SELECT ON formedsnowflakes TO python;
-GRANT INSERT ON formedsnowflakes TO python;
-GRANT UPDATE ON formedsnowflakes TO python;
-GRANT DELETE ON formedsnowflakes TO python;
+CREATE TABLE freezers(id integer NOT NULL PRIMARY KEY, name varchar(250) not null, description text);
+
+CREATE TABLE composition(collection integer NOT NULL, drop_index numeric(1000) not null, quality numeric(15, 10) not null, freezer integer NOT NULL, parameters jsonpath);
+
+CREATE TABLE potential_snowflakes(collection integer not null, in_registry smallint NOT NULL, in_index integer NOT NULL, quality numeric(15, 10) not null);
+
+CREATE TABLE useless_snowflakes(collection integer not null, in_registry smallint NOT NULL, in_index integer NOT NULL);
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO python;
+GRANT INSERT ON ALL TABLES IN SCHEMA public TO python;
+GRANT UPDATE ON ALL TABLES IN SCHEMA public TO python;
+GRANT DELETE ON ALL TABLES IN SCHEMA public TO python;
+GRANT TRUNCATE ON ALL TABLES IN SCHEMA public TO python;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO pgadminforouterconnection;
+GRANT INSERT ON ALL TABLES IN SCHEMA public TO pgadminforouterconnection;
+GRANT UPDATE ON ALL TABLES IN SCHEMA public TO pgadminforouterconnection;
+GRANT DELETE ON ALL TABLES IN SCHEMA public TO pgadminforouterconnection;
+GRANT TRUNCATE ON ALL TABLES IN SCHEMA public TO pgadminforouterconnection;
