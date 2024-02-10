@@ -13,7 +13,7 @@ CREATE TABLE collections(id integer NOT NULL PRIMARY KEY, name varchar(250) NOT 
 
 CREATE TABLE water_vessels(collection integer NOT NULL, begin_drop_index numeric(1000) NOT NULL, end_drop_index numeric(1000) NOT NULL);
 
-CREATE TABLE drops_internal_registries(collection integer NOT NULL, registry smallint NOT NULL, order smallint NOT NULL);
+CREATE TABLE drops_internal_registries(collection integer NOT NULL, registry smallint NOT NULL, sort_order smallint NOT NULL);
 
 CREATE TABLE drops_internal_indexes(collection integer NOT NULL, dropindex numeric(1000) NOT NULL, in_registry smallint NOT NULL, in_index integer NOT NULL);
 
