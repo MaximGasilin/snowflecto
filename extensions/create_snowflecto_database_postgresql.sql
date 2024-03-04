@@ -1,6 +1,6 @@
 CREATE DATABASE snowflecto;
-GRANT CONNECT ON DATABASE snowflecto TO python;
-GRANT TEMPORARY ON DATABASE snowflecto TO python;
+GRANT CONNECT ON DATABASE snowflecto TO snowflecto;
+GRANT TEMPORARY ON DATABASE snowflecto TO snowflecto;
 GRANT CONNECT ON DATABASE snowflecto TO pgadminforouterconnection;
 GRANT TEMPORARY ON DATABASE snowflecto TO pgadminforouterconnection;
 
@@ -15,23 +15,25 @@ CREATE TABLE water_vessels(collection integer NOT NULL, begin_drop_index numeric
 
 CREATE TABLE drops_internal_registries(collection integer NOT NULL, registry smallint NOT NULL, sort_order smallint NOT NULL);
 
-CREATE TABLE drops_internal_indexes(collection integer NOT NULL, dropindex numeric(1000) NOT NULL, in_registry smallint NOT NULL, in_index integer NOT NULL);
+CREATE TABLE drops_internal_indexes(collection integer NOT NULL, drop_index numeric(1000) NOT NULL, in_registry smallint NOT NULL, in_index integer NOT NULL);
 
 CREATE TABLE freezing_drops(collection integer NOT NULL, in_registry smallint NOT NULL, in_index integer NOT NULL, begin timestamp not null);
 
-CREATE TABLE freezers(id integer NOT NULL PRIMARY KEY, name varchar(250) not null, description text);
+CREATE TABLE freezers(id integer NOT NULL PRIMARY KEY, name varchar(250) NOT NULL, description text);
 
-CREATE TABLE compositions(collection integer NOT NULL, drop_index numeric(1000) not null, quality numeric(15, 10) not null, freezer integer NOT NULL, parameters jsonpath);
+CREATE TABLE compositions(collection integer NOT NULL, drop_index numeric(1000) NOT NULL, quality numeric(15, 10) NOT NULL, freezer integer NOT NULL, parameters jsonpath);
 
-CREATE TABLE potential_snowflakes(collection integer not null, in_registry smallint NOT NULL, in_index integer NOT NULL, quality numeric(15, 10) not null);
+CREATE TABLE potential_snowflakes(collection integer NOT NULL, in_registry smallint NOT NULL, in_index integer NOT NULL, quality numeric(15, 10) not null);
 
-CREATE TABLE useless_snowflakes(collection integer not null, in_registry smallint NOT NULL, in_index integer NOT NULL);
+CREATE TABLE useless_snowflakes(collection integer NOT NULL, in_registry smallint NOT NULL, in_index integer NOT NULL);
 
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO python;
-GRANT INSERT ON ALL TABLES IN SCHEMA public TO python;
-GRANT UPDATE ON ALL TABLES IN SCHEMA public TO python;
-GRANT DELETE ON ALL TABLES IN SCHEMA public TO python;
-GRANT TRUNCATE ON ALL TABLES IN SCHEMA public TO python;
+CREATE TABLE autotests_control_values(id smallint NOT NULL, step integer NOT NULL, control_value jsonpath);
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO snowflecto;
+GRANT INSERT ON ALL TABLES IN SCHEMA public TO snowflecto;
+GRANT UPDATE ON ALL TABLES IN SCHEMA public TO snowflecto;
+GRANT DELETE ON ALL TABLES IN SCHEMA public TO snowflecto;
+GRANT TRUNCATE ON ALL TABLES IN SCHEMA public TO snowflecto;
 
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO pgadminforouterconnection;
 GRANT INSERT ON ALL TABLES IN SCHEMA public TO pgadminforouterconnection;
